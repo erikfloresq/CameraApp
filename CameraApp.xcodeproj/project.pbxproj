@@ -61,11 +61,11 @@
 				08653E502722436F0075B0FF /* AppDelegate.swift */,
 				08653E522722436F0075B0FF /* SceneDelegate.swift */,
 				08653E542722436F0075B0FF /* CameraViewController.swift */,
+				08653E6427257A510075B0FF /* FancyCamera.swift */,
 				08653E562722436F0075B0FF /* Main.storyboard */,
 				08653E59272243710075B0FF /* Assets.xcassets */,
 				08653E5B272243710075B0FF /* LaunchScreen.storyboard */,
 				08653E5E272243710075B0FF /* Info.plist */,
-				08653E6427257A510075B0FF /* FancyCamera.swift */,
 			);
 			path = CameraApp;
 			sourceTree = "<group>";

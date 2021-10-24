@@ -16,34 +16,53 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ey5-zp-7Dm">
-                                <rect key="frame" x="176" y="806" width="62.5" height="31"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Shoot"/>
-                                <connections>
-                                    <action selector="shootAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Rng-kw-UMs"/>
-                                </connections>
-                            </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B4R-Gq-H3b">
+                                <rect key="frame" x="177" y="777" width="60" height="60"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ey5-zp-7Dm">
+                                        <rect key="frame" x="5" y="5" width="50" height="50"/>
+                                        <color key="backgroundColor" red="0.89803922179999995" green="0.19607841970000001" blue="0.33333334329999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain"/>
+                                        <connections>
+                                            <action selector="shootAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="d1n-w1-xbI"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemOrangeColor"/>
+                                <constraints>
+                                    <constraint firstItem="ey5-zp-7Dm" firstAttribute="top" secondItem="B4R-Gq-H3b" secondAttribute="top" constant="5" id="9H5-RI-E6z"/>
+                                    <constraint firstAttribute="trailing" secondItem="ey5-zp-7Dm" secondAttribute="trailing" constant="5" id="JTv-xz-8GP"/>
+                                    <constraint firstAttribute="height" constant="60" id="OPf-ei-15H"/>
+                                    <constraint firstAttribute="bottom" secondItem="ey5-zp-7Dm" secondAttribute="bottom" constant="5" id="Ugx-k6-qd5"/>
+                                    <constraint firstAttribute="width" constant="60" id="YsE-DL-Wqw"/>
+                                    <constraint firstItem="ey5-zp-7Dm" firstAttribute="leading" secondItem="B4R-Gq-H3b" secondAttribute="leading" constant="5" id="mOV-b4-bDK"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="ey5-zp-7Dm" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="QF3-tv-06w"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="ey5-zp-7Dm" secondAttribute="bottom" constant="25" id="rqi-zs-ENy"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="B4R-Gq-H3b" secondAttribute="bottom" constant="25" id="mS8-BV-vgL"/>
+                            <constraint firstItem="B4R-Gq-H3b" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="yFA-wi-sul"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="shootButton" destination="ey5-zp-7Dm" id="ib1-Gb-VWN"/>
+                        <outlet property="shootButton" destination="ey5-zp-7Dm" id="dLW-SF-8hB"/>
+                        <outlet property="shootButtonContainer" destination="B4R-Gq-H3b" id="Rmk-Y7-6Hs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="30" y="70"/>
+            <point key="canvasLocation" x="28.985507246376812" y="69.642857142857139"/>
         </scene>
     </scenes>
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemOrangeColor">
+            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

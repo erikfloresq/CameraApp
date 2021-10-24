@@ -8,19 +8,35 @@
 import Foundation
 import AVFoundation
 import UIKit
+import Photos
 
 class FancyCamera: UIViewController {
-    @IBOutlet weak var shootButton: UIButton!
+    @IBOutlet weak var shootButtonContainer: UIView! {
+        didSet {
+            shootButtonContainer.layer.cornerRadius = 30
+            shootButtonContainer.backgroundColor = .white
+        }
+    }
+    @IBOutlet weak var shootButton: UIButton! {
+        didSet {
+            shootButton.layer.cornerRadius = 25
+            shootButton.layer.borderColor = .init(red: 0, green: 0, blue: 0, alpha: 1.0)
+            shootButton.layer.borderWidth = 2
+            shootButton.backgroundColor = .white
+        }
+    }
     var backFacingCamera: AVCaptureDevice?
     var frontFacingCamera: AVCaptureDevice?
     var currentDevice: AVCaptureDevice!
     var stillImageOutput: AVCapturePhotoOutput!
     var stillImage: UIImage?
+    var photoData: Data?
     var cameraPreviewLayer: AVCaptureVideoPreviewLayer?
     let captureSession = AVCaptureSession()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        configure()
     }
 
     func configure() {
@@ -48,7 +64,7 @@ class FancyCamera: UIViewController {
         cameraPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
         cameraPreviewLayer?.frame = view.layer.frame
 
-        view.bringSubviewToFront(shootButton)
+        view.bringSubviewToFront(shootButtonContainer)
         captureSession.startRunning()
     }
 
@@ -71,6 +87,37 @@ extension FancyCamera: AVCapturePhotoCaptureDelegate {
         guard let imageData = photo.fileDataRepresentation() else {
             return
         }
+        photoData = imageData
         stillImage = UIImage(data: imageData)
+    }
+
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings, error: Error?) {
+        if let error = error {
+            print("Error capturing photo: \(error)")
+            //didFinish()
+            return
+        }
+
+        guard let photoData = photoData else {
+            print("No photo data resource")
+            //didFinish()
+            return
+        }
+
+        PHPhotoLibrary.requestAuthorization { status in
+            if status == .authorized {
+                PHPhotoLibrary.shared().performChanges {
+                    let options = PHAssetResourceCreationOptions()
+                    let creationRequest = PHAssetCreationRequest.forAsset()
+                    creationRequest.addResource(with: .photo, data: photoData, options: options)
+                } completionHandler: { _, error in
+                    guard error == nil else {
+                        return
+                    }
+                }
+            } else {
+
+            }
+        }
     }
 }

@@ -23,5 +23,7 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>I need take a picture</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>I need to save the photo</string>
 </dict>
 </plist>
