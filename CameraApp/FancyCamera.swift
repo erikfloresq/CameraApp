@@ -1,14 +1,15 @@
 //
-//  ViewController.swift
+//  FancyCamera.swift
 //  CameraApp
 //
-//  Created by Erik Flores on 21/10/21.
+//  Created by Erik Flores on 24/10/21.
 //
 
-import UIKit
+import Foundation
 import AVFoundation
+import UIKit
 
-class CameraViewController: UIViewController {
+class FancyCamera: UIViewController {
     @IBOutlet weak var shootButton: UIButton!
     var backFacingCamera: AVCaptureDevice?
     var frontFacingCamera: AVCaptureDevice?
@@ -20,7 +21,6 @@ class CameraViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        configure()
     }
 
     func configure() {
@@ -43,19 +43,17 @@ class CameraViewController: UIViewController {
         captureSession.addInput(captureDeviceInput)
         captureSession.addOutput(stillImageOutput)
 
-        // Provide a camera preview
         cameraPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         view.layer.addSublayer(cameraPreviewLayer!)
         cameraPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
         cameraPreviewLayer?.frame = view.layer.frame
 
-        // Bring the camera button to front
         view.bringSubviewToFront(shootButton)
         captureSession.startRunning()
     }
 
+
     @IBAction func shootAction(_ sender: Any) {
-        // Set photo settings
         let photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
         photoSettings.isHighResolutionPhotoEnabled = true
         photoSettings.flashMode = .auto
@@ -63,21 +61,16 @@ class CameraViewController: UIViewController {
         stillImageOutput.isHighResolutionCaptureEnabled = true
         stillImageOutput.capturePhoto(with: photoSettings, delegate: self)
     }
-
 }
 
-extension CameraViewController: AVCapturePhotoCaptureDelegate {
+extension FancyCamera: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard error == nil else {
             return
         }
-
-        // Get the image from the photo buffer
         guard let imageData = photo.fileDataRepresentation() else {
             return
         }
-
         stillImage = UIImage(data: imageData)
     }
 }
-
