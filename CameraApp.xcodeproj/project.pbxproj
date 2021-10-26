@@ -9,23 +9,21 @@
 /* Begin PBXBuildFile section */
 		08653E512722436F0075B0FF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08653E502722436F0075B0FF /* AppDelegate.swift */; };
 		08653E532722436F0075B0FF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08653E522722436F0075B0FF /* SceneDelegate.swift */; };
-		08653E552722436F0075B0FF /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08653E542722436F0075B0FF /* CameraViewController.swift */; };
 		08653E582722436F0075B0FF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08653E562722436F0075B0FF /* Main.storyboard */; };
 		08653E5A272243710075B0FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08653E59272243710075B0FF /* Assets.xcassets */; };
 		08653E5D272243710075B0FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08653E5B272243710075B0FF /* LaunchScreen.storyboard */; };
-		08653E6527257A510075B0FF /* FancyCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08653E6427257A510075B0FF /* FancyCamera.swift */; };
+		08653E6527257A510075B0FF /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08653E6427257A510075B0FF /* CameraViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		08653E4D2722436F0075B0FF /* CameraApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CameraApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08653E502722436F0075B0FF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		08653E522722436F0075B0FF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		08653E542722436F0075B0FF /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		08653E572722436F0075B0FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		08653E59272243710075B0FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		08653E5C272243710075B0FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		08653E5E272243710075B0FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		08653E6427257A510075B0FF /* FancyCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyCamera.swift; sourceTree = "<group>"; };
+		08653E6427257A510075B0FF /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,8 +58,7 @@
 			children = (
 				08653E502722436F0075B0FF /* AppDelegate.swift */,
 				08653E522722436F0075B0FF /* SceneDelegate.swift */,
-				08653E542722436F0075B0FF /* CameraViewController.swift */,
-				08653E6427257A510075B0FF /* FancyCamera.swift */,
+				08653E6427257A510075B0FF /* CameraViewController.swift */,
 				08653E562722436F0075B0FF /* Main.storyboard */,
 				08653E59272243710075B0FF /* Assets.xcassets */,
 				08653E5B272243710075B0FF /* LaunchScreen.storyboard */,
@@ -141,9 +138,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				08653E552722436F0075B0FF /* CameraViewController.swift in Sources */,
 				08653E512722436F0075B0FF /* AppDelegate.swift in Sources */,
-				08653E6527257A510075B0FF /* FancyCamera.swift in Sources */,
+				08653E6527257A510075B0FF /* CameraViewController.swift in Sources */,
 				08653E532722436F0075B0FF /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

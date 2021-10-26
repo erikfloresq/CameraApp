@@ -1,20 +1,37 @@
 //
-//  ViewController.swift
+//  FancyCamera.swift
 //  CameraApp
 //
-//  Created by Erik Flores on 21/10/21.
+//  Created by Erik Flores on 24/10/21.
 //
 
-import UIKit
+import Foundation
 import AVFoundation
+import UIKit
+import Photos
 
 class CameraViewController: UIViewController {
-    @IBOutlet weak var shootButton: UIButton!
+    @IBOutlet weak var shootButtonContainer: UIView! {
+        didSet {
+            shootButtonContainer.layer.cornerRadius = 30
+            shootButtonContainer.backgroundColor = .white
+        }
+    }
+    @IBOutlet weak var shootButton: UIButton! {
+        didSet {
+            shootButton.layer.cornerRadius = 25
+            shootButton.layer.borderColor = .init(red: 0, green: 0, blue: 0, alpha: 1.0)
+            shootButton.layer.borderWidth = 2
+            shootButton.backgroundColor = .white
+        }
+    }
+    @IBOutlet weak var cameraRotationButton: UIButton!
     var backFacingCamera: AVCaptureDevice?
     var frontFacingCamera: AVCaptureDevice?
     var currentDevice: AVCaptureDevice!
     var stillImageOutput: AVCapturePhotoOutput!
     var stillImage: UIImage?
+    var photoData: Data?
     var cameraPreviewLayer: AVCaptureVideoPreviewLayer?
     let captureSession = AVCaptureSession()
 
@@ -23,9 +40,14 @@ class CameraViewController: UIViewController {
         configure()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        captureSession.stopRunning()
+    }
+
     func configure() {
         captureSession.sessionPreset = AVCaptureSession.Preset.photo
-        let deviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInDualCamera], mediaType: .video, position: .unspecified)
+        let deviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
         for device in deviceDiscoverySession.devices {
             if device.position == .back {
                 backFacingCamera = device
@@ -43,19 +65,18 @@ class CameraViewController: UIViewController {
         captureSession.addInput(captureDeviceInput)
         captureSession.addOutput(stillImageOutput)
 
-        // Provide a camera preview
         cameraPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         view.layer.addSublayer(cameraPreviewLayer!)
         cameraPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
         cameraPreviewLayer?.frame = view.layer.frame
 
-        // Bring the camera button to front
-        view.bringSubviewToFront(shootButton)
+        view.bringSubviewToFront(shootButtonContainer)
+        view.bringSubviewToFront(cameraRotationButton)
         captureSession.startRunning()
     }
 
+
     @IBAction func shootAction(_ sender: Any) {
-        // Set photo settings
         let photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
         photoSettings.isHighResolutionPhotoEnabled = true
         photoSettings.flashMode = .auto
@@ -64,6 +85,9 @@ class CameraViewController: UIViewController {
         stillImageOutput.capturePhoto(with: photoSettings, delegate: self)
     }
 
+    @IBAction func cameraRotationAction(_ sender: Any) {
+
+    }
 }
 
 extension CameraViewController: AVCapturePhotoCaptureDelegate {
@@ -71,13 +95,40 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
         guard error == nil else {
             return
         }
-
-        // Get the image from the photo buffer
         guard let imageData = photo.fileDataRepresentation() else {
             return
         }
-
+        photoData = imageData
         stillImage = UIImage(data: imageData)
     }
-}
 
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings, error: Error?) {
+        if let error = error {
+            print("Error capturing photo: \(error)")
+            //didFinish()
+            return
+        }
+
+        guard let photoData = photoData else {
+            print("No photo data resource")
+            //didFinish()
+            return
+        }
+
+        PHPhotoLibrary.requestAuthorization { status in
+            if status == .authorized {
+                PHPhotoLibrary.shared().performChanges {
+                    let options = PHAssetResourceCreationOptions()
+                    let creationRequest = PHAssetCreationRequest.forAsset()
+                    creationRequest.addResource(with: .photo, data: photoData, options: options)
+                } completionHandler: { _, error in
+                    guard error == nil else {
+                        return
+                    }
+                }
+            } else {
+
+            }
+        }
+    }
+}

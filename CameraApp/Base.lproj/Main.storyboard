@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Fancy Camera-->
+        <!--Camera View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="FancyCamera" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="CameraViewController" customModule="CameraApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -21,7 +21,7 @@
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ey5-zp-7Dm">
                                         <rect key="frame" x="5" y="5" width="50" height="50"/>
-                                        <color key="backgroundColor" red="0.89803922179999995" green="0.19607841970000001" blue="0.33333334329999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain"/>
                                         <connections>
@@ -29,7 +29,7 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" systemColor="systemOrangeColor"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="ey5-zp-7Dm" firstAttribute="top" secondItem="B4R-Gq-H3b" secondAttribute="top" constant="5" id="9H5-RI-E6z"/>
                                     <constraint firstAttribute="trailing" secondItem="ey5-zp-7Dm" secondAttribute="trailing" constant="5" id="JTv-xz-8GP"/>
@@ -39,15 +39,31 @@
                                     <constraint firstItem="ey5-zp-7Dm" firstAttribute="leading" secondItem="B4R-Gq-H3b" secondAttribute="leading" constant="5" id="mOV-b4-bDK"/>
                                 </constraints>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QrB-uL-Aut">
+                                <rect key="frame" x="354" y="797" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="L6l-oB-Ks6"/>
+                                    <constraint firstAttribute="height" constant="40" id="ttb-Sv-b9H"/>
+                                </constraints>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" image="camera.rotate.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="cameraRotationAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="h8i-6v-fG9"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="QrB-uL-Aut" secondAttribute="trailing" constant="20" id="YAp-Lp-8ku"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="QrB-uL-Aut" secondAttribute="bottom" constant="25" id="lXU-ix-KLh"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="B4R-Gq-H3b" secondAttribute="bottom" constant="25" id="mS8-BV-vgL"/>
                             <constraint firstItem="B4R-Gq-H3b" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="yFA-wi-sul"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="cameraRotationButton" destination="QrB-uL-Aut" id="3zO-GB-Ibs"/>
                         <outlet property="shootButton" destination="ey5-zp-7Dm" id="dLW-SF-8hB"/>
                         <outlet property="shootButtonContainer" destination="B4R-Gq-H3b" id="Rmk-Y7-6Hs"/>
                     </connections>
@@ -58,11 +74,9 @@
         </scene>
     </scenes>
     <resources>
+        <image name="camera.rotate.fill" catalog="system" width="128" height="94"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemOrangeColor">
-            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
