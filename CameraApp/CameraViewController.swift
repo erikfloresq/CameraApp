@@ -34,6 +34,12 @@ class CameraViewController: UIViewController {
     var photoData: Data?
     var cameraPreviewLayer: AVCaptureVideoPreviewLayer?
     let captureSession = AVCaptureSession()
+    var feedbackGenerator : UINotificationFeedbackGenerator? = nil
+    @IBOutlet weak var previewImage: UIImageView! {
+        didSet {
+            previewImage.layer.cornerRadius = 10
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,6 +78,7 @@ class CameraViewController: UIViewController {
 
         view.bringSubviewToFront(shootButtonContainer)
         view.bringSubviewToFront(cameraRotationButton)
+        view.bringSubviewToFront(previewImage)
         captureSession.startRunning()
     }
 
@@ -91,29 +98,43 @@ class CameraViewController: UIViewController {
 }
 
 extension CameraViewController: AVCapturePhotoCaptureDelegate {
+    func photoOutput(_ output: AVCapturePhotoOutput, willBeginCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
+        cameraPreviewLayer?.opacity = 0.5
+        feedbackGenerator = UINotificationFeedbackGenerator()
+        feedbackGenerator?.prepare()
+    }
+
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard error == nil else {
+            feedbackGenerator = nil
             return
         }
         guard let imageData = photo.fileDataRepresentation() else {
+            feedbackGenerator = nil
             return
         }
         photoData = imageData
         stillImage = UIImage(data: imageData)
+        previewImage.image = stillImage
     }
 
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings, error: Error?) {
         if let error = error {
             print("Error capturing photo: \(error)")
-            //didFinish()
+            feedbackGenerator = nil
             return
         }
 
         guard let photoData = photoData else {
             print("No photo data resource")
-            //didFinish()
+            feedbackGenerator = nil
             return
         }
+
+        cameraPreviewLayer?.opacity = 1
+        feedbackGenerator?.notificationOccurred(.success)
+        feedbackGenerator?.prepare()
+
 
         PHPhotoLibrary.requestAuthorization { status in
             if status == .authorized {

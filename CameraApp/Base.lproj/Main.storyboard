@@ -29,7 +29,7 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="ey5-zp-7Dm" firstAttribute="top" secondItem="B4R-Gq-H3b" secondAttribute="top" constant="5" id="9H5-RI-E6z"/>
                                     <constraint firstAttribute="trailing" secondItem="ey5-zp-7Dm" secondAttribute="trailing" constant="5" id="JTv-xz-8GP"/>
@@ -52,18 +52,28 @@
                                     <action selector="cameraRotationAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="h8i-6v-fG9"/>
                                 </connections>
                             </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="btP-2Q-pgo">
+                                <rect key="frame" x="20" y="777" width="56" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="56" id="DaJ-M7-9Dr"/>
+                                    <constraint firstAttribute="height" constant="60" id="soQ-Nz-O8N"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="QrB-uL-Aut" secondAttribute="trailing" constant="20" id="YAp-Lp-8ku"/>
+                            <constraint firstItem="btP-2Q-pgo" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="dNH-XF-Wb5"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="QrB-uL-Aut" secondAttribute="bottom" constant="25" id="lXU-ix-KLh"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="B4R-Gq-H3b" secondAttribute="bottom" constant="25" id="mS8-BV-vgL"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="btP-2Q-pgo" secondAttribute="bottom" constant="25" id="omJ-XX-YYD"/>
                             <constraint firstItem="B4R-Gq-H3b" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="yFA-wi-sul"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="cameraRotationButton" destination="QrB-uL-Aut" id="3zO-GB-Ibs"/>
+                        <outlet property="previewImage" destination="btP-2Q-pgo" id="J28-6M-BIs"/>
                         <outlet property="shootButton" destination="ey5-zp-7Dm" id="dLW-SF-8hB"/>
                         <outlet property="shootButtonContainer" destination="B4R-Gq-H3b" id="Rmk-Y7-6Hs"/>
                     </connections>
