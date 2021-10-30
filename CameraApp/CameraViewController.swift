@@ -8,7 +8,6 @@
 import Foundation
 import AVFoundation
 import UIKit
-import Photos
 
 enum SessionSetupResult {
     case success
@@ -42,7 +41,7 @@ class CameraViewController: UIViewController {
     var photoOutput: AVCapturePhotoOutput!
     var photoData: Data?
     let captureSession = AVCaptureSession()
-    let sessionQueue = DispatchQueue(label: "session queue")
+    let sessionQueue = DispatchQueue(label: "dev.erikflores.sessionQueue")
     var feedbackGenerator : UINotificationFeedbackGenerator? = nil
     var windowOrientation: UIInterfaceOrientation {
         return view.window?.windowScene?.interfaceOrientation ?? .unknown
@@ -55,6 +54,7 @@ class CameraViewController: UIViewController {
         view.bringSubviewToFront(shootButtonContainer)
         view.bringSubviewToFront(cameraRotationButton)
         view.bringSubviewToFront(previewImage)
+        addTapGestureTo(imageView: previewImage)
         sessionQueue.async {
             self.configureCaptureSession()
         }
@@ -82,6 +82,12 @@ class CameraViewController: UIViewController {
 
             videoPreviewLayerConnection.videoOrientation = newVideoOrientation
         }
+    }
+
+    func addTapGestureTo(imageView: UIImageView) {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showPreview(_:)))
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(tapGesture)
     }
 
     func configureCaptureSession() {
@@ -227,83 +233,16 @@ class CameraViewController: UIViewController {
             }
         }
     }
-}
 
-extension CameraViewController: AVCapturePhotoCaptureDelegate {
-    func photoOutput(_ output: AVCapturePhotoOutput, willBeginCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
-        feedbackGenerator = UINotificationFeedbackGenerator()
-        feedbackGenerator?.prepare()
-    }
-
-    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        guard error == nil else {
-            feedbackGenerator = nil
-            return
-        }
-        guard let imageData = photo.fileDataRepresentation() else {
-            feedbackGenerator = nil
-            return
-        }
-        photoData = imageData
-        previewImage.image = UIImage(data: imageData)
-    }
-
-    func photoOutput(_ output: AVCapturePhotoOutput, didFinishCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings, error: Error?) {
-        if let error = error {
-            print("Error capturing photo: \(error)")
-            feedbackGenerator = nil
-            return
-        }
-
-        guard let photoData = photoData else {
-            print("No photo data resource")
-            feedbackGenerator = nil
-            return
-        }
-
-        feedbackGenerator?.notificationOccurred(.success)
-        feedbackGenerator?.prepare()
-
-        savePhoto(photoData: photoData)
-    }
-
-    func savePhoto(photoData: Data) {
-        PHPhotoLibrary.requestAuthorization { status in
-            if status == .authorized {
-                PHPhotoLibrary.shared().performChanges {
-                    let options = PHAssetResourceCreationOptions()
-                    let creationRequest = PHAssetCreationRequest.forAsset()
-                    creationRequest.addResource(with: .photo, data: photoData, options: options)
-                } completionHandler: { _, error in
-                    guard error == nil else {
-                        return
-                    }
-                }
-            } else {
-
-            }
+    @objc
+    func showPreview(_ sender: UIImageView) {
+        if let photoData = photoData {
+            let previewViewController = PreviewViewController()
+            previewViewController.previewImage = UIImageView(image: UIImage(data: photoData))
+            let navigationController = UINavigationController(rootViewController: previewViewController)
+            present(navigationController, animated: true, completion: nil)
         }
     }
 }
 
-extension AVCaptureVideoOrientation {
-    init?(deviceOrientation: UIDeviceOrientation) {
-        switch deviceOrientation {
-        case .portrait: self = .portrait
-        case .portraitUpsideDown: self = .portraitUpsideDown
-        case .landscapeLeft: self = .landscapeRight
-        case .landscapeRight: self = .landscapeLeft
-        default: return nil
-        }
-    }
 
-    init?(interfaceOrientation: UIInterfaceOrientation) {
-        switch interfaceOrientation {
-        case .portrait: self = .portrait
-        case .portraitUpsideDown: self = .portraitUpsideDown
-        case .landscapeLeft: self = .landscapeLeft
-        case .landscapeRight: self = .landscapeRight
-        default: return nil
-        }
-    }
-}
