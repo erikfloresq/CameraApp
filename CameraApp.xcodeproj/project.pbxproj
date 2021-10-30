@@ -13,6 +13,7 @@
 		08653E5A272243710075B0FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08653E59272243710075B0FF /* Assets.xcassets */; };
 		08653E5D272243710075B0FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08653E5B272243710075B0FF /* LaunchScreen.storyboard */; };
 		08653E6527257A510075B0FF /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08653E6427257A510075B0FF /* CameraViewController.swift */; };
+		08E69124272C1DED000DCE73 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08E69123272C1DED000DCE73 /* PreviewView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		08653E5C272243710075B0FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		08653E5E272243710075B0FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08653E6427257A510075B0FF /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
+		08E69123272C1DED000DCE73 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				08653E59272243710075B0FF /* Assets.xcassets */,
 				08653E5B272243710075B0FF /* LaunchScreen.storyboard */,
 				08653E5E272243710075B0FF /* Info.plist */,
+				08E69123272C1DED000DCE73 /* PreviewView.swift */,
 			);
 			path = CameraApp;
 			sourceTree = "<group>";
@@ -139,6 +142,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				08653E512722436F0075B0FF /* AppDelegate.swift in Sources */,
+				08E69124272C1DED000DCE73 /* PreviewView.swift in Sources */,
 				08653E6527257A510075B0FF /* CameraViewController.swift in Sources */,
 				08653E532722436F0075B0FF /* SceneDelegate.swift in Sources */,
 			);

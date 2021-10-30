@@ -10,6 +10,12 @@ import AVFoundation
 import UIKit
 import Photos
 
+enum SessionSetupResult {
+    case success
+    case notAuthorized
+    case configurationFailed
+}
+
 class CameraViewController: UIViewController {
     @IBOutlet weak var shootButtonContainer: UIView! {
         didSet {
@@ -26,60 +32,144 @@ class CameraViewController: UIViewController {
         }
     }
     @IBOutlet weak var cameraRotationButton: UIButton!
-    var backFacingCamera: AVCaptureDevice?
-    var frontFacingCamera: AVCaptureDevice?
-    var currentDevice: AVCaptureDevice!
-    var stillImageOutput: AVCapturePhotoOutput!
-    var stillImage: UIImage?
-    var photoData: Data?
-    var cameraPreviewLayer: AVCaptureVideoPreviewLayer?
-    let captureSession = AVCaptureSession()
-    var feedbackGenerator : UINotificationFeedbackGenerator? = nil
     @IBOutlet weak var previewImage: UIImageView! {
         didSet {
-            previewImage.layer.cornerRadius = 10
+            previewImage.layer.cornerRadius = 5
         }
     }
+    @IBOutlet weak var previewLayer: PreviewView!
+    @objc dynamic var videoDeviceInput: AVCaptureDeviceInput!
+    var photoOutput: AVCapturePhotoOutput!
+    var photoData: Data?
+    let captureSession = AVCaptureSession()
+    let sessionQueue = DispatchQueue(label: "session queue")
+    var feedbackGenerator : UINotificationFeedbackGenerator? = nil
+    var windowOrientation: UIInterfaceOrientation {
+        return view.window?.windowScene?.interfaceOrientation ?? .unknown
+    }
+    var setupResult: SessionSetupResult = .success
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        configure()
+        previewLayer.session = captureSession
+        view.bringSubviewToFront(shootButtonContainer)
+        view.bringSubviewToFront(cameraRotationButton)
+        view.bringSubviewToFront(previewImage)
+        sessionQueue.async {
+            self.configureCaptureSession()
+        }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        startSession()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        captureSession.stopRunning()
+        stopSession()
     }
 
-    func configure() {
-        captureSession.sessionPreset = AVCaptureSession.Preset.photo
-        let deviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
-        for device in deviceDiscoverySession.devices {
-            if device.position == .back {
-                backFacingCamera = device
-            } else if device.position == .front {
-                frontFacingCamera = device
-            }
-        }
-        currentDevice = backFacingCamera
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
 
-        guard let captureDeviceInput = try? AVCaptureDeviceInput(device: currentDevice) else {
+        if let videoPreviewLayerConnection = previewLayer.videoPreviewLayer.connection {
+            let deviceOrientation = UIDevice.current.orientation
+            guard let newVideoOrientation = AVCaptureVideoOrientation(deviceOrientation: deviceOrientation),
+                deviceOrientation.isPortrait || deviceOrientation.isLandscape else {
+                    return
+            }
+
+            videoPreviewLayerConnection.videoOrientation = newVideoOrientation
+        }
+    }
+
+    func configureCaptureSession() {
+        if setupResult != .success {
             return
         }
-        stillImageOutput = AVCapturePhotoOutput()
+        captureSession.beginConfiguration()
+        captureSession.sessionPreset = .photo
+        addInput()
+        addOutput()
+    }
 
-        captureSession.addInput(captureDeviceInput)
-        captureSession.addOutput(stillImageOutput)
+    func startSession() {
+        sessionQueue.async {
+            switch self.setupResult {
+                case .success:
+                    self.captureSession.startRunning()
+                case .notAuthorized:
+                    print("notAuthorized")
+                case .configurationFailed:
+                    print("configurationFailed")
+            }
 
-        cameraPreviewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        view.layer.addSublayer(cameraPreviewLayer!)
-        cameraPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
-        cameraPreviewLayer?.frame = view.layer.frame
+        }
+    }
 
-        view.bringSubviewToFront(shootButtonContainer)
-        view.bringSubviewToFront(cameraRotationButton)
-        view.bringSubviewToFront(previewImage)
-        captureSession.startRunning()
+    func stopSession() {
+        sessionQueue.async {
+            if self.setupResult == .success {
+                self.captureSession.stopRunning()
+            }
+        }
+    }
+
+    func addInput() {
+        do {
+            var defaultVideoDevice: AVCaptureDevice?
+            if let dualCameraDevice = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) {
+                defaultVideoDevice = dualCameraDevice
+            } else if let dualWideCameraDevice = AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: .back) {
+                defaultVideoDevice = dualWideCameraDevice
+            } else if let backCameraDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) {
+                defaultVideoDevice = backCameraDevice
+            } else if let frontCameraDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) {
+                defaultVideoDevice = frontCameraDevice
+            }
+            guard let videoDevice = defaultVideoDevice else {
+                setupResult = .configurationFailed
+                captureSession.commitConfiguration()
+                return
+            }
+            let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
+            if captureSession.canAddInput(videoDeviceInput) {
+                captureSession.addInput(videoDeviceInput)
+                self.videoDeviceInput = videoDeviceInput
+                DispatchQueue.main.async {
+                    var initialVideoOrientation: AVCaptureVideoOrientation = .portrait
+                    if self.windowOrientation != .unknown {
+                        if let videoOrientation = AVCaptureVideoOrientation(interfaceOrientation: self.windowOrientation) {
+                            initialVideoOrientation = videoOrientation
+                        }
+                    }
+                    self.previewLayer.videoPreviewLayer.connection?.videoOrientation = initialVideoOrientation
+                }
+            } else {
+                setupResult = .configurationFailed
+                captureSession.commitConfiguration()
+                return
+            }
+        } catch {
+            setupResult = .configurationFailed
+            captureSession.commitConfiguration()
+            return
+        }
+    }
+
+    func addOutput() {
+        photoOutput = AVCapturePhotoOutput()
+        if captureSession.canAddOutput(photoOutput) {
+            captureSession.addOutput(photoOutput)
+            photoOutput.isHighResolutionCaptureEnabled = true
+            photoOutput.maxPhotoQualityPrioritization = .quality
+        } else {
+            setupResult = .configurationFailed
+            captureSession.commitConfiguration()
+            return
+        }
+        captureSession.commitConfiguration()
     }
 
 
@@ -88,18 +178,59 @@ class CameraViewController: UIViewController {
         photoSettings.isHighResolutionPhotoEnabled = true
         photoSettings.flashMode = .auto
 
-        stillImageOutput.isHighResolutionCaptureEnabled = true
-        stillImageOutput.capturePhoto(with: photoSettings, delegate: self)
+        photoOutput.isHighResolutionCaptureEnabled = true
+        photoOutput.capturePhoto(with: photoSettings, delegate: self)
     }
 
     @IBAction func cameraRotationAction(_ sender: Any) {
+        sessionQueue.async {
+            self.changeCamera()
+        }
+    }
 
+    func changeCamera() {
+        let currentVideoDevice = self.videoDeviceInput.device
+        let currentPosition = currentVideoDevice.position
+
+        let backVideoDeviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInDualCamera, .builtInDualWideCamera, .builtInWideAngleCamera],
+                                                                               mediaType: .video, position: .back)
+        let frontVideoDeviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInTrueDepthCamera, .builtInWideAngleCamera],
+                                                                                mediaType: .video, position: .front)
+        var newVideoDevice: AVCaptureDevice? = nil
+
+        switch currentPosition {
+        case .unspecified, .front:
+            newVideoDevice = backVideoDeviceDiscoverySession.devices.first
+
+        case .back:
+            newVideoDevice = frontVideoDeviceDiscoverySession.devices.first
+
+        @unknown default:
+            print("Unknown capture position. Defaulting to back, dual-camera.")
+            newVideoDevice = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back)
+        }
+        if let videoDevice = newVideoDevice {
+            do {
+                let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
+                self.captureSession.beginConfiguration()
+                self.captureSession.removeInput(self.videoDeviceInput)
+                if self.captureSession.canAddInput(videoDeviceInput) {
+                    self.captureSession.addInput(videoDeviceInput)
+                    self.videoDeviceInput = videoDeviceInput
+                } else {
+                    self.captureSession.addInput(self.videoDeviceInput)
+                }
+                self.photoOutput.maxPhotoQualityPrioritization = .quality
+                self.captureSession.commitConfiguration()
+            } catch {
+                print("Error occurred while creating video device input: \(error)")
+            }
+        }
     }
 }
 
 extension CameraViewController: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, willBeginCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
-        cameraPreviewLayer?.opacity = 0.5
         feedbackGenerator = UINotificationFeedbackGenerator()
         feedbackGenerator?.prepare()
     }
@@ -114,8 +245,7 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
             return
         }
         photoData = imageData
-        stillImage = UIImage(data: imageData)
-        previewImage.image = stillImage
+        previewImage.image = UIImage(data: imageData)
     }
 
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings, error: Error?) {
@@ -131,11 +261,13 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
             return
         }
 
-        cameraPreviewLayer?.opacity = 1
         feedbackGenerator?.notificationOccurred(.success)
         feedbackGenerator?.prepare()
 
+        savePhoto(photoData: photoData)
+    }
 
+    func savePhoto(photoData: Data) {
         PHPhotoLibrary.requestAuthorization { status in
             if status == .authorized {
                 PHPhotoLibrary.shared().performChanges {
@@ -150,6 +282,28 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
             } else {
 
             }
+        }
+    }
+}
+
+extension AVCaptureVideoOrientation {
+    init?(deviceOrientation: UIDeviceOrientation) {
+        switch deviceOrientation {
+        case .portrait: self = .portrait
+        case .portraitUpsideDown: self = .portraitUpsideDown
+        case .landscapeLeft: self = .landscapeRight
+        case .landscapeRight: self = .landscapeLeft
+        default: return nil
+        }
+    }
+
+    init?(interfaceOrientation: UIInterfaceOrientation) {
+        switch interfaceOrientation {
+        case .portrait: self = .portrait
+        case .portraitUpsideDown: self = .portraitUpsideDown
+        case .landscapeLeft: self = .landscapeLeft
+        case .landscapeRight: self = .landscapeRight
+        default: return nil
         }
     }
 }
