@@ -26,6 +26,7 @@
 		08653E5E272243710075B0FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08653E6427257A510075B0FF /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		08E69123272C1DED000DCE73 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
+		08E69125272CDBAB000DCE73 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +62,7 @@
 				08653E502722436F0075B0FF /* AppDelegate.swift */,
 				08653E522722436F0075B0FF /* SceneDelegate.swift */,
 				08653E6427257A510075B0FF /* CameraViewController.swift */,
+				08E69125272CDBAB000DCE73 /* README.md */,
 				08653E562722436F0075B0FF /* Main.storyboard */,
 				08653E59272243710075B0FF /* Assets.xcassets */,
 				08653E5B272243710075B0FF /* LaunchScreen.storyboard */,
